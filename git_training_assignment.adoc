@@ -1,0 +1,913 @@
+:toc: left
+:sectnums:
+:nofooter:
+:icons: font
+
+= Git Team Training Assignment -- Team Greeting Project
+
+NOTE: Disclosure: partially AI generated content
+
+== Overview
+
+This assignment teaches collaborative Git workflows using a simple "Team Greeting Project". Four students (S1, S2, S3, S4) will work together on a shared repository, practicing:
+
+* Repository creation and cloning
+* Branch creation and management
+* Commits and pushing
+* Pull Requests (GitHub)
+* Merging and rebasing
+* Merge conflict resolution
+* Tagging/labeling releases
+* Rollback (reverting commits)
+
+== Prerequisites
+
+* Git installed on each student's machine
+* GitHub account for each student
+* Basic command line knowledge
+
+=== Merge vs. Rebase
+
+*Merge*
+
+* Combines two branches by creating a _merge commit_ (unless it can fast-forward). 
+Preserves the original branch structure and history.
+* Use when:
+** You want an _audit-friendly_ history with explicit integration points
+** The branch is _shared_ and you want to avoid rewriting history
+** Your workflow prefers visible merge points for PRs
+
+*Rebase*
+
+* Replays your commits onto a new base to create a _linear_ history. 
+This _rewrites commit IDs_.
+* Use when:
+** You want to update your feature branch onto the latest `main` before/while working on a PR
+** You want to clean up your own commits (squash/fixup) before merging
+** Your team prefers a linear history on `main`
+
+*Rule of thumb*
+
+* Use `merge` for shared branches and when preserving history matters.
+* Use `rebase` for keeping your own branch current/clean, but _don't rebase commits others already pulled_ (unless coordinated with a force push).
+
+
+== Project Description
+
+You will create a simple team greeting project consisting of:
+
+* A `team.txt` file listing team members
+* A `greeting.sh` script that displays a greeting
+* A `config.txt` file with project settings
+
+== Important Notes
+
+* `<REPO_URL>` = The GitHub repository URL created by S1 (e.g., `https://github.com/student1-username/team-greeting.git`)
+* Each student works in their own local directory
+* Students should coordinate timing (wait for previous steps to complete)
+* All students must use their real names instead of "Student 1", etc.
+
+== Assignment Steps
+
+[cols="1,3,3,3,3,4", options="header"]
+|===
+|Time |S1 (Repository Owner) |S2 |S3 |S4 |Explanation / State
+
+|T1
+|*Create GitHub repository:*
+
+Go to github.com → New repository
+
+Name: `team-greeting`
+
+Public, NO README, NO .gitignore
+
+Copy the repository URL
+| - | - | - 
+|S1 creates an empty GitHub repository. The URL will be used by all students. Example: `https://github.com/<s1-username>/team-greeting.git`
+
+|T2
+a|*Initialize local repo:*
+[source,bash]
+----
+mkdir team-greeting
+cd team-greeting
+git init
+git config user.name "Student One"
+git config user.email "s1@example.com"
+----
+| - | - | - 
+|S1 creates local repository with local user config (does not affect global git config).
+
+|T3
+a|*Create initial files:*
+[source,bash]
+----
+cat > README.md << 'EOF'
+# Team Greeting Project
+
+A simple project to learn Git collaboration.
+
+## Team Members
+- See team.txt
+
+## Usage
+Run ./greeting.sh
+EOF
+----
+| - | - | - 
+|S1 creates the README file.
+
+|T4
+a|*Create team.txt:*
+[source,bash]
+----
+cat > team.txt << 'EOF'
+# Team Members
+1. Student One - Project Lead
+EOF
+----
+| - | - | - 
+|S1 creates initial team.txt with only their name.
+
+|T5
+a|*Create greeting.sh:*
+[source,bash]
+----
+cat > greeting.sh << 'EOF'
+#!/bin/bash
+echo "=== Team Greeting ==="
+echo "Hello from the team!"
+echo "===================="
+EOF
+chmod +x greeting.sh
+----
+| - | - | - 
+|S1 creates the greeting script.
+
+|T6
+a|*Initial commit and push:*
+[source,bash]
+----
+git add .
+git commit -m "Initial commit: README, team.txt, greeting.sh"
+git branch -M main
+git remote add origin <REPO_URL>
+git push -u origin main
+----
+| - | - | - 
+|S1 pushes initial code to GitHub. Repository now has main branch with 3 files.
+
+|T7
+|*Add collaborators on GitHub:*
+
+Go to repository → Settings → Collaborators
+
+Add S2, S3, S4 as collaborators
+| - | - | - 
+|S1 grants write access to all team members.
+
+|T8
+| - 
+a|*Clone repository:*
+[source,bash]
+----
+git clone <REPO_URL>
+cd team-greeting
+git config user.name "Student Two"
+git config user.email "s2@example.com"
+----
+a|*Clone repository:*
+[source,bash]
+----
+git clone <REPO_URL>
+cd team-greeting
+git config user.name "Student Three"
+git config user.email "s3@example.com"
+----
+a|*Clone repository:*
+[source,bash]
+----
+git clone <REPO_URL>
+cd team-greeting
+git config user.name "Student Four"
+git config user.email "s4@example.com"
+----
+|S2, S3, S4 clone the repository and set their local user config.
+
+|T9
+| - 
+a|*Create feature branch:*
+[source,bash]
+----
+git checkout -b feature/add-s2-to-team
+----
+a|*Create feature branch:*
+[source,bash]
+----
+git checkout -b feature/add-s3-to-team
+----
+| - 
+|S2 and S3 create their own feature branches to add themselves to team.txt.
+
+|T10
+| - 
+a|*Edit team.txt (add S2):*
+[source,bash]
+----
+cat > team.txt << 'EOF'
+# Team Members
+1. Student One - Project Lead
+2. Student Two - Developer
+EOF
+----
+| - | - 
+|S2 adds themselves to team.txt in their branch.
+
+|T11
+| - 
+a|*Commit and push:*
+[source,bash]
+----
+git add team.txt
+git commit -m "Add Student Two to team"
+git push -u origin feature/add-s2-to-team
+----
+| - | - 
+|S2 pushes their feature branch to GitHub.
+
+|T12
+| - 
+|*Create Pull Request on GitHub:*
+
+Go to repository → Pull requests → New
+
+Base: main ← Compare: feature/add-s2-to-team
+
+Title: "Add Student Two to team"
+
+Create pull request
+| - | - 
+|S2 creates a PR. This is ready for review.
+
+|T13
+|*Review and merge PR on GitHub:*
+
+Go to Pull requests → S2's PR
+
+Review changes → Approve
+
+Click "Merge pull request"
+
+Click "Confirm merge"
+| - | - | - 
+|S1 reviews and merges S2's PR. Main branch now includes Student Two.
+
+|T14
+| - | - 
+a|*Edit team.txt (add S3):*
+[source,bash]
+----
+cat > team.txt << 'EOF'
+# Team Members
+1. Student One - Project Lead
+3. Student Three - Tester
+EOF
+----
+| - 
+|S3 adds themselves - but notice they're working from OLD main (before S2's merge). This will cause a conflict!
+
+|T15
+| - | - 
+a|*Commit changes:*
+[source,bash]
+----
+git add team.txt
+git commit -m "Add Student Three to team"
+----
+| - 
+|S3 commits their changes locally.
+
+|T16
+| - | - 
+a|*Try to push (will work since it's a new branch):*
+[source,bash]
+----
+git push -u origin feature/add-s3-to-team
+----
+| - 
+|S3 pushes their branch. The branch itself pushes fine.
+
+|T17
+| - | - 
+|*Create Pull Request on GitHub:*
+
+Go to repository → Pull requests → New
+
+Base: main ← Compare: feature/add-s3-to-team
+
+Title: "Add Student Three to team"
+
+Create pull request
+| - 
+|S3 creates PR. GitHub will show a merge conflict because main changed!
+
+|T18
+| - | - 
+a|*Resolve conflict locally - fetch and rebase:*
+[source,bash]
+----
+git fetch origin
+git rebase origin/main
+----
+| - 
+|S3 fetches latest main and attempts rebase. Git will pause due to conflict.
+
+|T19
+| - | - 
+a|*View conflict:*
+[source,bash]
+----
+git status
+cat team.txt
+----
+| - 
+|S3 sees the conflict markers in team.txt.
+
+|T20
+| - | - 
+a|*Resolve conflict - edit team.txt:*
+[source,bash]
+----
+cat > team.txt << 'EOF'
+# Team Members
+1. Student One - Project Lead
+2. Student Two - Developer
+3. Student Three - Tester
+EOF
+----
+| - 
+|S3 manually resolves conflict by including BOTH changes.
+
+|T21
+| - | - 
+a|*Complete rebase:*
+[source,bash]
+----
+git add team.txt
+git rebase --continue
+----
+| - 
+|S3 stages resolved file and continues rebase.
+
+|T22
+| - | - 
+a|*Force push rebased branch:*
+[source,bash]
+----
+git push --force-with-lease origin feature/add-s3-to-team
+----
+| - 
+|S3 force pushes (required after rebase). PR is now conflict-free.
+
+|T23
+|*Merge S3's PR on GitHub:*
+
+Go to Pull requests → S3's PR
+
+Click "Merge pull request"
+
+Click "Confirm merge"
+| - | - | - 
+|S1 merges S3's PR. Main now has 3 team members.
+
+|T24
+| - | - | - 
+a|*Create feature branch for config:*
+[source,bash]
+----
+git fetch origin
+git checkout main
+git pull origin main
+git checkout -b feature/add-config
+----
+|S4 creates a branch to add a config file.
+
+|T25
+| - | - | - 
+a|*Create config.txt:*
+[source,bash]
+----
+cat > config.txt << 'EOF'
+# Project Configuration
+project_name=Team Greeting
+version=1.0
+language=bash
+debug=false
+EOF
+----
+|S4 creates a new config file.
+
+|T26
+| - | - | - 
+a|*Commit and push:*
+[source,bash]
+----
+git add config.txt
+git commit -m "Add project configuration file"
+git push -u origin feature/add-config
+----
+|S4 pushes their feature branch.
+
+|T27
+| - | - | - 
+|*Create Pull Request on GitHub:*
+
+Go to repository → Pull requests → New
+
+Base: main ← Compare: feature/add-config
+
+Title: "Add project configuration"
+
+Create pull request
+|S4 creates a PR for the config file.
+
+|T28
+|*Merge S4's PR on GitHub:*
+
+Click "Merge pull request"
+
+Click "Confirm merge"
+| - | - | - 
+|S1 merges S4's config PR.
+
+|T29
+a|*Tag version 1.0:*
+[source,bash]
+----
+git fetch origin
+git checkout main
+git pull origin main
+git tag -a v1.0 -m "Version 1.0 - Initial team setup"
+git push origin v1.0
+----
+| - | - | - 
+|S1 creates an annotated tag for version 1.0. This marks a release point.
+
+|T30
+| - 
+a|*Sync and create greeting branch:*
+[source,bash]
+----
+git fetch origin
+git checkout main
+git pull origin main
+git checkout -b feature/improve-greeting
+----
+| - | - 
+|S2 starts work on improving the greeting script.
+
+|T31
+| - 
+a|*Edit greeting.sh:*
+[source,bash]
+----
+cat > greeting.sh << 'EOF'
+#!/bin/bash
+echo "=== Team Greeting ==="
+echo "Welcome to our project!"
+echo ""
+echo "Hello from the team!"
+echo ""
+echo "Have a great day!"
+echo "===================="
+EOF
+----
+| - | - 
+|S2 improves the greeting script.
+
+|T32
+| - 
+a|*Commit and push:*
+[source,bash]
+----
+git add greeting.sh
+git commit -m "Improve greeting message"
+git push -u origin feature/improve-greeting
+----
+| - | - 
+|S2 pushes the improved greeting.
+
+|T33
+| - 
+|*Create PR on GitHub:*
+
+Create PR for feature/improve-greeting → main
+
+Title: "Improve greeting message"
+| - | - 
+|S2 creates PR for improved greeting.
+
+|T34
+|*Merge S2's greeting PR*
+
+Merge pull request on GitHub
+| - | - | - 
+|S1 merges the improved greeting.
+
+|T35
+| - | - 
+a|*Add S4 to team via merge (not rebase):*
+[source,bash]
+----
+git fetch origin
+git checkout main
+git pull origin main
+git checkout -b feature/add-s4-to-team
+----
+| - 
+|S3 will help add S4 to the team.txt file.
+
+|T36
+| - | - 
+a|*Edit team.txt:*
+[source,bash]
+----
+cat > team.txt << 'EOF'
+# Team Members
+1. Student One - Project Lead
+2. Student Two - Developer
+3. Student Three - Tester
+4. Student Four - DevOps
+EOF
+----
+| - 
+|S3 adds S4 to the team file.
+
+|T37
+| - | - 
+a|*Commit and push:*
+[source,bash]
+----
+git add team.txt
+git commit -m "Add Student Four to team"
+git push -u origin feature/add-s4-to-team
+----
+| - 
+|S3 pushes the branch.
+
+|T38
+| - | - 
+|*Create and merge PR:*
+
+Create PR on GitHub
+
+Ask S1 to merge
+| - 
+|S3 creates PR.
+
+|T39
+|*Merge S3's PR*
+
+Merge pull request on GitHub
+| - | - | - 
+|S1 merges S3's PR. All 4 members now in team.txt.
+
+|T40
+| - | - | - 
+a|*Make a bad commit (for rollback demo):*
+[source,bash]
+----
+git fetch origin
+git checkout main
+git pull origin main
+cat > config.txt << 'EOF'
+# Project Configuration
+project_name=BROKEN PROJECT
+version=9.9.9
+language=unknown
+debug=true
+THIS IS WRONG DATA
+EOF
+git add config.txt
+git commit -m "Update config (this is wrong)"
+git push origin main
+----
+|S4 intentionally makes a bad commit directly to main (simulating a mistake).
+
+|T41
+a|*View history to find bad commit:*
+[source,bash]
+----
+git fetch origin
+git pull origin main
+git log --oneline -5
+----
+| - | - | - 
+|S1 checks the history to identify the bad commit.
+
+|T42
+a|*Revert the bad commit:*
+[source,bash]
+----
+git revert HEAD --no-edit
+git push origin main
+----
+| - | - | - 
+|S1 reverts the bad commit. This creates a NEW commit that undoes the changes (safe for shared branches).
+
+|T43
+| - 
+a|*Verify revert worked:*
+[source,bash]
+----
+git pull origin main
+cat config.txt
+git log --oneline -5
+----
+| - | - 
+|S2 pulls and verifies config.txt is restored. History shows original commit AND revert commit.
+
+|T44
+a|*Create v1.1 tag:*
+[source,bash]
+----
+git tag -a v1.1 -m "Version 1.1 - Full team, recovered from bad config"
+git push origin v1.1
+----
+| - | - | - 
+|S1 tags version 1.1.
+
+|T45
+| - | - 
+a|*Practice cherry-pick setup - create branch:*
+[source,bash]
+----
+git checkout -b feature/cherry-pick-demo
+cat > bonus.txt << 'EOF'
+# Bonus Features
+- Feature A
+EOF
+git add bonus.txt
+git commit -m "Add bonus feature A"
+----
+| - 
+|S3 creates a branch with a commit for cherry-pick demo.
+
+|T46
+| - | - 
+a|*Add more commits:*
+[source,bash]
+----
+echo "- Feature B (experimental)" >> bonus.txt
+git add bonus.txt
+git commit -m "Add experimental feature B"
+
+echo "- Feature C" >> bonus.txt
+git add bonus.txt
+git commit -m "Add feature C"
+
+git push -u origin feature/cherry-pick-demo
+----
+| - 
+|S3 adds more commits. We'll cherry-pick only specific ones.
+
+|T47
+| - | - 
+a|*Show commit hashes:*
+[source,bash]
+----
+git log --oneline -3
+----
+(Note the hash of "Add feature C" commit)
+| - 
+|S3 identifies the commit hash to cherry-pick.
+
+|T48
+| - 
+a|*Cherry-pick specific commit:*
+[source,bash]
+----
+git checkout main
+git pull origin main
+git checkout -b feature/only-feature-c
+git cherry-pick <HASH_OF_FEATURE_C_COMMIT>
+----
+(Replace <HASH_OF_FEATURE_C_COMMIT> with actual hash from T47)
+| - | - 
+|S2 cherry-picks ONLY the "feature C" commit, skipping experimental feature B.
+
+|T49
+| - 
+a|*Push and create PR:*
+[source,bash]
+----
+git push -u origin feature/only-feature-c
+----
+Create PR on GitHub
+| - | - 
+|S2 pushes cherry-picked branch.
+
+|T50
+|*Merge cherry-pick PR*
+
+Merge pull request on GitHub
+| - | - | - 
+|S1 merges. Main now has Feature A and C from bonus.txt, but NOT Feature B.
+
+|T51
+| - | - | - 
+a|*Interactive rebase demo - setup:*
+[source,bash]
+----
+git fetch origin
+git checkout main
+git pull origin main
+git checkout -b feature/cleanup-demo
+echo "Line 1" > cleanup.txt
+git add cleanup.txt
+git commit -m "WIP: started cleanup"
+echo "Line 2" >> cleanup.txt
+git add cleanup.txt
+git commit -m "WIP: more work"
+echo "Line 3" >> cleanup.txt
+git add cleanup.txt
+git commit -m "WIP: almost done"
+echo "Line 4" >> cleanup.txt
+git add cleanup.txt
+git commit -m "Finished cleanup feature"
+----
+|S4 creates multiple messy "WIP" commits.
+
+|T52
+| - | - | - 
+a|*Squash commits with interactive rebase:*
+[source,bash]
+----
+git rebase -i HEAD~4
+----
+(In editor, change all "pick" to "squash" except first one, save and close)
+
+(In next editor, write new message: "Add cleanup feature with 4 lines")
+|S4 squashes 4 commits into 1 clean commit.
+
+|T53
+| - | - | - 
+a|*Push and create PR:*
+[source,bash]
+----
+git push -u origin feature/cleanup-demo
+----
+Create PR on GitHub
+|S4 pushes squashed branch.
+
+|T54
+|*Final merge:*
+
+Merge pull request on GitHub
+| - | - | - 
+|S1 merges the final PR.
+
+|T55
+a|*Create final release tag:*
+[source,bash]
+----
+git fetch origin
+git checkout main
+git pull origin main
+git tag -a v2.0 -m "Version 2.0 - Complete training project"
+git push origin v2.0
+----
+| - | - | - 
+|S1 creates final v2.0 tag.
+
+|T56
+a|*View all tags:*
+[source,bash]
+----
+git tag -l
+git show v2.0
+----
+a|*Sync and view tags:*
+[source,bash]
+----
+git fetch --tags
+git tag -l
+----
+a|*Sync and view tags:*
+[source,bash]
+----
+git fetch --tags
+git tag -l
+----
+a|*Sync and view tags:*
+[source,bash]
+----
+git fetch --tags
+git tag -l
+----
+|All students sync and can see v1.0, v1.1, v2.0 tags.
+
+|T57
+a|*View complete history:*
+[source,bash]
+----
+git log --oneline --graph --all
+----
+a|*View complete history:*
+[source,bash]
+----
+git log --oneline --graph --all
+----
+a|*View complete history:*
+[source,bash]
+----
+git log --oneline --graph --all
+----
+a|*View complete history:*
+[source,bash]
+----
+git log --oneline --graph --all
+----
+|Final step: All students view the complete project history with branches, merges, and tags.
+
+|===
+
+== Summary of Concepts Covered
+
+[cols="2,4", options="header"]
+|===
+|Concept |Timestamps
+
+|Repository creation
+|T1-T6
+
+|Cloning
+|T8
+
+|Local user configuration
+|T2, T8
+
+|Feature branches
+|T9, T24, T30, T35, T45, T48, T51
+
+|Basic commits and push
+|T6, T11, T26, T32, T37
+
+|Pull Requests
+|T12, T17, T27, T33, T38, T49, T53
+
+|PR review and merge
+|T13, T23, T28, T34, T39, T50, T54
+
+|Merge conflicts
+|T17-T22
+
+|Rebase (to update branch)
+|T18-T22
+
+|Force push after rebase
+|T22
+
+|Tags (releases)
+|T29, T44, T55
+
+|Revert (rollback)
+|T40-T43
+
+|Cherry-pick
+|T45-T50
+
+|Interactive rebase (squash)
+|T51-T52
+
+|Viewing history
+|T41, T43, T56, T57
+
+|===
+
+== Verification Checklist
+
+After completing all steps, verify:
+
+* [ ] Repository has 3 tags: v1.0, v1.1, v2.0
+* [ ] team.txt contains all 4 students
+* [ ] config.txt has correct (non-broken) content
+* [ ] greeting.sh has improved message
+* [ ] bonus.txt exists with Features A and C
+* [ ] cleanup.txt exists with 4 lines
+* [ ] Git history shows merges, reverts, and various branches
+
+== Common Issues and Solutions
+
+=== "Permission denied" when pushing
+Ensure you were added as collaborator (T7) and accepted the invitation.
+
+=== Merge conflicts during rebase
+Don't panic! Edit the file to include both changes, then `git add` and `git rebase --continue`.
+
+=== Forgot to set local user config
+Run `git config user.name "Your Name"` and `git config user.email "your@email.com"` in the repo directory.
+
+=== Push rejected after rebase
+Use `git push --force-with-lease origin <branch-name>` (only for YOUR feature branches, never for main!).
