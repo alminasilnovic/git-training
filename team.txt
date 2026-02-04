@@ -2,3 +2,4 @@
 1. Almina Silnovic - Project Lead
 2. Elysee Mbala - Developer
 3. Clemens Gugerbauer - Tester
+4. Student Four - DevOps
