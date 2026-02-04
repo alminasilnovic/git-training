@@ -1,6 +1,9 @@
-# git-training
+# Team Greeting Project
 
-- Almina Silnovic (S1)
-- Elysee Mbala (S2)
-- Clemens Gugebauer (S3)
-- Konstantin Wetscher (S4)
+A simple project to learn Git collaboration.
+
+## Team Members
+- See team.txt
+
+## Usage
+Run ./greeting.sh
