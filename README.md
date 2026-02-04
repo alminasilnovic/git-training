@@ -1,6 +1,6 @@
 # git-training
 
-- Almina Silnovic
-- Elysee Mbala
-- Konstantin Wetscher
-- Clemens Gugebauer
+- Almina Silnovic (S1)
+- Elysee Mbala (S2)
+- Clemens Gugebauer (S3)
+- Konstantin Wetscher (S4)
